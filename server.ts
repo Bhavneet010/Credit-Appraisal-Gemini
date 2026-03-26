@@ -156,7 +156,7 @@ async function startServer() {
       
       // Use npx archiver-cli to compress the current directory
       // We'll just zip the src, public, and config files to avoid node_modules
-      execSync(`npx -y archiver-cli "src/**/*" "public/**/*" "package.json" "vite.config.ts" "server.ts" "index.html" "tailwind.config.js" "postcss.config.js" ".env.example" --out-file=${zipPath}`);
+      execSync(`npx -y archiver-cli "src/**/*" "public/**/*" "package.json" "package-lock.json" "vite.config.ts" "server.ts" "index.html" "tailwind.config.js" "postcss.config.js" ".env.example" --out-file=${zipPath}`);
       
       res.download(zipPath, 'ai-studio-project.zip', (err) => {
         if (err) {
