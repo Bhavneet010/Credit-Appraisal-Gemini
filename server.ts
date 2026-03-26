@@ -4,15 +4,14 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import { execSync } from 'child_process';
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
-  app.use(cookieParser());
-  app.use(express.json({ limit: '50mb' }));
+app.use(cookieParser());
+app.use(express.json({ limit: '50mb' }));
 
-  // GitHub OAuth Routes
-  app.get('/api/auth/github/url', (req, res) => {
+// GitHub OAuth Routes
+app.get('/api/auth/github/url', (req, res) => {
     const clientId = process.env.GITHUB_CLIENT_ID;
     if (!clientId) {
       return res.status(500).json({ error: 'GITHUB_CLIENT_ID is not configured' });
@@ -177,11 +176,12 @@ async function startServer() {
 
   // Vite middleware
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
+    createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
+    }).then((vite) => {
+      app.use(vite.middlewares);
     });
-    app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
@@ -190,9 +190,10 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
-}
+  if (!process.env.VERCEL) {
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
 
-startServer();
+export default app;
