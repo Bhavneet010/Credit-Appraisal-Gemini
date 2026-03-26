@@ -1,0 +1,5 @@
+{
+  "name": "GitHub Explorer",
+  "description": "Connects to your GitHub account to view repositories and activity.",
+  "requestFramePermissions": []
+}
